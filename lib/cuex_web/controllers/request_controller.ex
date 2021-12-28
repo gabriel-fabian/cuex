@@ -25,6 +25,11 @@ defmodule CuexWeb.RequestController do
     render(conn, "show.json", request: request)
   end
 
+  def show_requests_from_user(conn, %{"user_id" => user_id}) do
+    requests = Converter.get_requests_from_user(user_id)
+    render(conn, "index.json", requests: requests)
+  end
+
   def update(conn, %{"id" => id, "request" => request_params}) do
     request = Converter.get_request!(id)
 

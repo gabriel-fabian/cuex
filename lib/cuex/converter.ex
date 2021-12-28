@@ -38,6 +38,20 @@ defmodule Cuex.Converter do
   def get_request!(id), do: Repo.get!(Request, id)
 
   @doc """
+  Returns the list of requests for a given user_id
+
+  ## Examples
+
+      iex> get_requests_from_user(2)
+      [%Request{}, ...]
+  """
+  def get_requests_from_user(user_id) do
+    Request
+    |> where(user_id: ^user_id)
+    |> Repo.all()
+  end
+
+  @doc """
   Creates a request.
 
   ## Examples

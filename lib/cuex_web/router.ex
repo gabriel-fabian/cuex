@@ -8,7 +8,10 @@ defmodule CuexWeb.Router do
   scope "/api", CuexWeb do
     pipe_through :api
 
-    resources "/requests", RequestController
+    scope "requests" do
+      get("/", RequestController, :index)
+      get("/user/:user_id", RequestController, :show_requests_from_user)
+    end
   end
 
   # Enables LiveDashboard only for development
