@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  cuex:
+    build: .
+    image: cuex
+    container_name: cuex
+    working_dir: /cuex
+    entrypoint: sh entrypoint.sh
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/cuex
+      - deps:/cuex/deps
+      - build:/cuex/_build
+
+volumes:
+  deps:
+  build:
