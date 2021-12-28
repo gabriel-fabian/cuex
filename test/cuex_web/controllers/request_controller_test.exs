@@ -19,7 +19,13 @@ defmodule CuexWeb.RequestControllerTest do
     user_id: 43,
     value: 456.7
   }
-  @invalid_attrs %{conversion_rate: nil, from_currency: nil, to_currency: nil, user_id: nil, value: nil}
+  @invalid_attrs %{
+    conversion_rate: nil,
+    from_currency: nil,
+    to_currency: nil,
+    user_id: nil,
+    value: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

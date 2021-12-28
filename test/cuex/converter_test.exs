@@ -8,7 +8,13 @@ defmodule Cuex.ConverterTest do
 
     import Cuex.ConverterFixtures
 
-    @invalid_attrs %{conversion_rate: nil, from_currency: nil, to_currency: nil, user_id: nil, value: nil}
+    @invalid_attrs %{
+      conversion_rate: nil,
+      from_currency: nil,
+      to_currency: nil,
+      user_id: nil,
+      value: nil
+    }
 
     test "list_requests/0 returns all requests" do
       request = request_fixture()
@@ -21,7 +27,13 @@ defmodule Cuex.ConverterTest do
     end
 
     test "create_request/1 with valid data creates a request" do
-      valid_attrs = %{conversion_rate: 120.5, from_currency: "some from_currency", to_currency: "some to_currency", user_id: 42, value: 120.5}
+      valid_attrs = %{
+        conversion_rate: 120.5,
+        from_currency: "some from_currency",
+        to_currency: "some to_currency",
+        user_id: 42,
+        value: 120.5
+      }
 
       assert {:ok, %Request{} = request} = Converter.create_request(valid_attrs)
       assert request.conversion_rate == 120.5
@@ -37,7 +49,14 @@ defmodule Cuex.ConverterTest do
 
     test "update_request/2 with valid data updates the request" do
       request = request_fixture()
-      update_attrs = %{conversion_rate: 456.7, from_currency: "some updated from_currency", to_currency: "some updated to_currency", user_id: 43, value: 456.7}
+
+      update_attrs = %{
+        conversion_rate: 456.7,
+        from_currency: "some updated from_currency",
+        to_currency: "some updated to_currency",
+        user_id: 43,
+        value: 456.7
+      }
 
       assert {:ok, %Request{} = request} = Converter.update_request(request, update_attrs)
       assert request.conversion_rate == 456.7
