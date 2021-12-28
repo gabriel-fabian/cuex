@@ -7,6 +7,8 @@ defmodule CuexWeb.Router do
 
   scope "/api", CuexWeb do
     pipe_through :api
+
+    resources "/requests", RequestController
   end
 
   # Enables LiveDashboard only for development
