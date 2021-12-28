@@ -33,15 +33,17 @@ defmodule Cuex.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.5"},
-      {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
       {:ecto_sqlite3, ">= 0.0.0"},
+      {:httpoison, "~> 0.13.0"},
+      {:jason, "~> 1.2"},
+      {:phoenix_ecto, "~> 4.4"},
       {:phoenix_live_dashboard, "~> 0.6"},
+      {:phoenix, "~> 1.6.5"},
+      {:plug_cowboy, "~> 2.5"},
+      {:poison, "~> 2.0"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
     ]
   end
 
