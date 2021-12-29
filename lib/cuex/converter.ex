@@ -104,21 +104,30 @@ defmodule Cuex.Converter do
     end
   end
 
+  def convert_currency(params) do
+    Logger.info("Converter | Received request with invalid params=#{inspect(params)}")
+
+    {:error, %{status_code: 400, body: "Invalid params provided, params=#{inspect(params)}"}}
+  end
+
   defp get_euro_exchange_rates(rates, from_currency, to_currency) do
-    with true <- is_valid_currency?(rates, from_currency),
-         true <- is_valid_currency?(rates, to_currency) do
+    with {true, _} <- is_valid_currency?(rates, from_currency),
+         {true, _} <- is_valid_currency?(rates, to_currency) do
       {:ok, {rates[from_currency], rates[to_currency]}}
     else
-      _ ->
+      {false, currency} ->
         Logger.info("Converter | Fail to convert. Invalid currency type received")
 
-        {:error, %{status_code: 400, body: "Invalid currency type"}}
+        {:error,
+         %{
+           status_code: 400,
+           body: "Invalid currency type provided. Currency=#{currency}"
+         }}
     end
   end
 
-  defp is_valid_currency?(rates, currency) do
-    is_integer(rates[currency]) or is_float(rates[currency])
-  end
+  defp is_valid_currency?(rates, currency),
+    do: {is_integer(rates[currency]) or is_float(rates[currency]), currency}
 
   defp convert_values({from_rate, to_rate}, value) when is_integer(value) or is_float(value),
     do: {:ok, value / from_rate * to_rate}
