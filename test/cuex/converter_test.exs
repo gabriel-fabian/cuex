@@ -78,4 +78,27 @@ defmodule Cuex.ConverterTest do
       assert {:error, %Ecto.Changeset{}} = Converter.create_request(@invalid_attrs)
     end
   end
+
+  describe "convert_currency/1" do
+    @valid_params %{
+      "from_currency" => "EUR",
+      "to_currency" => "USD",
+      "value" => 10,
+      "user_id" => 1
+    }
+
+    test "with valid params returns converted value" do
+      assert {:ok, response} = Converter.convert_currency(@valid_params)
+      assert response.from_currency == "EUR"
+      assert response.to_currency == "USD"
+      assert response.value == 10
+      assert response.converted_value == 11.33768
+      assert response.user_id == 1
+    end
+
+    test "with invalid params returns an error" do
+      assert {:error, response} = Converter.convert_currency(nil)
+      assert response == %{body: "Invalid params provided, params=nil", status_code: 400}
+    end
+  end
 end
