@@ -22,6 +22,8 @@ config :cuex, CuexWeb.Endpoint,
   secret_key_base: "JqGe+FIDQaigNflJTEjshDKQ0BeNm9GJLKgVxGuSphN91kuhfZwvQxaDC5TbsGc/",
   watchers: []
 
+config :cuex, :exchangerate, api: Cuex.Api.Mock.ExchangeRate
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

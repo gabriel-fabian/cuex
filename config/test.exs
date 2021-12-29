@@ -17,6 +17,8 @@ config :cuex, CuexWeb.Endpoint,
   secret_key_base: "wibYMJpMD7hYSXPAlWL4AWr8yWT3Qm0iXwJUeimjmzfn5rAYGjO7cpz8L1t2XI6U",
   server: false
 
+config :cuex, :exchangerate, api: Cuex.Api.Mock.ExchangeRate
+
 # Print only warnings and errors during test
 config :logger, level: :warn
 
