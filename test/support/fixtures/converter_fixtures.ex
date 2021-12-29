@@ -7,15 +7,15 @@ defmodule Cuex.ConverterFixtures do
   @doc """
   Generate a request.
   """
-  def request_fixture(attrs \\ %{}) do
+  def fixture(:request, attrs \\ %{}) do
     {:ok, request} =
       attrs
       |> Enum.into(%{
-        conversion_rate: 120.5,
-        from_currency: "some from_currency",
-        to_currency: "some to_currency",
-        user_id: 42,
-        value: 120.5
+        "conversion_rate" => 120.5,
+        "from_currency" => "test_from_currency",
+        "to_currency" => "test_to_currency",
+        "user_id" => 42,
+        "value" => 120.5
       })
       |> Cuex.Converter.create_request()
 
