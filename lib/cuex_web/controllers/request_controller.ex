@@ -11,38 +11,8 @@ defmodule CuexWeb.RequestController do
     render(conn, "index.json", requests: requests)
   end
 
-  def create(conn, %{"request" => request_params}) do
-    with {:ok, %Request{} = request} <- Converter.create_request(request_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.request_path(conn, :show, request))
-      |> render("show.json", request: request)
-    end
-  end
-
-  def show(conn, %{"id" => id}) do
-    request = Converter.get_request!(id)
-    render(conn, "show.json", request: request)
-  end
-
   def show_requests_from_user(conn, %{"user_id" => user_id}) do
     requests = Converter.get_requests_from_user(user_id)
     render(conn, "index.json", requests: requests)
-  end
-
-  def update(conn, %{"id" => id, "request" => request_params}) do
-    request = Converter.get_request!(id)
-
-    with {:ok, %Request{} = request} <- Converter.update_request(request, request_params) do
-      render(conn, "show.json", request: request)
-    end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    request = Converter.get_request!(id)
-
-    with {:ok, %Request{}} <- Converter.delete_request(request) do
-      send_resp(conn, :no_content, "")
-    end
   end
 end

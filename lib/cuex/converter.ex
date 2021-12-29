@@ -75,53 +75,6 @@ defmodule Cuex.Converter do
     |> create_request()
   end
 
-  @doc """
-  Updates a request.
-
-  ## Examples
-
-      iex> update_request(request, %{field: new_value})
-      {:ok, %Request{}}
-
-      iex> update_request(request, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_request(%Request{} = request, attrs) do
-    request
-    |> Request.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a request.
-
-  ## Examples
-
-      iex> delete_request(request)
-      {:ok, %Request{}}
-
-      iex> delete_request(request)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_request(%Request{} = request) do
-    Repo.delete(request)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking request changes.
-
-  ## Examples
-
-      iex> change_request(request)
-      %Ecto.Changeset{data: %Request{}}
-
-  """
-  def change_request(%Request{} = request, attrs \\ %{}) do
-    Request.changeset(request, attrs)
-  end
-
   def convert_currency(
         params = %{
           "from_currency" => from_currency,
