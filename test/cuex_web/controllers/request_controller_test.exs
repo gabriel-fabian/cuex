@@ -3,104 +3,80 @@ defmodule CuexWeb.RequestControllerTest do
 
   import Cuex.ConverterFixtures
 
-  alias Cuex.Converter.Request
+  alias Cuex.Converter
 
   @create_attrs %{
-    conversion_rate: 120.5,
-    from_currency: "some from_currency",
-    to_currency: "some to_currency",
-    user_id: 42,
-    value: 120.5
-  }
-  @update_attrs %{
-    conversion_rate: 456.7,
-    from_currency: "some updated from_currency",
-    to_currency: "some updated to_currency",
-    user_id: 43,
-    value: 456.7
-  }
-  @invalid_attrs %{
-    conversion_rate: nil,
-    from_currency: nil,
-    to_currency: nil,
-    user_id: nil,
-    value: nil
+    "conversion_rate" => 120.5,
+    "from_currency" => "some_from_currency",
+    "to_currency" => "some_to_currency",
+    "user_id" => 42,
+    "value" => 120.5
   }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
+
+    fixture(:request, @create_attrs)
+    fixture(:request, Map.merge(@create_attrs, %{"user_id" => 43}))
+    fixture(:request, @create_attrs)
+
+    %{
+      first_user_id: 42,
+      second_user_id: 43
+    }
   end
 
   describe "index" do
     test "lists all requests", %{conn: conn} do
+      expected_response = index_response()
+
       conn = get(conn, Routes.request_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
+      response_data = json_response(conn, 200)["data"]
+
+      assert response_data == expected_response
+      assert Enum.count(response_data) == 3
     end
   end
 
-  describe "create request" do
-    test "renders request when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.request_path(conn, :create), request: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+  describe "show_requests_from_user/2" do
+    test "lists all requests from user", %{conn: conn, first_user_id: user_id} do
+      expected_response = requests_from_user_response(user_id)
 
-      conn = get(conn, Routes.request_path(conn, :show, id))
+      conn = get(conn, Routes.request_path(conn, :show_requests_from_user, user_id))
+      response_data = json_response(conn, 200)["data"]
 
-      assert %{
-               "id" => ^id,
-               "conversion_rate" => 120.5,
-               "from_currency" => "some from_currency",
-               "to_currency" => "some to_currency",
-               "user_id" => 42,
-               "value" => 120.5
-             } = json_response(conn, 200)["data"]
-    end
-
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.request_path(conn, :create), request: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
+      assert response_data == expected_response
+      assert Enum.count(response_data) == 2
     end
   end
 
-  describe "update request" do
-    setup [:create_request]
+  defp index_response() do
+    requests = Converter.list_requests()
 
-    test "renders request when data is valid", %{conn: conn, request: %Request{id: id} = request} do
-      conn = put(conn, Routes.request_path(conn, :update, request), request: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
-      conn = get(conn, Routes.request_path(conn, :show, id))
-
-      assert %{
-               "id" => ^id,
-               "conversion_rate" => 456.7,
-               "from_currency" => "some updated from_currency",
-               "to_currency" => "some updated to_currency",
-               "user_id" => 43,
-               "value" => 456.7
-             } = json_response(conn, 200)["data"]
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, request: request} do
-      conn = put(conn, Routes.request_path(conn, :update, request), request: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
+    Enum.map(requests, fn request ->
+      %{
+        "conversion_rate" => request.conversion_rate,
+        "from_currency" => request.from_currency,
+        "id" => request.id,
+        "to_currency" => request.to_currency,
+        "user_id" => request.user_id,
+        "value" => request.value
+      }
+    end)
   end
 
-  describe "delete request" do
-    setup [:create_request]
+  defp requests_from_user_response(user_id) do
+    requests = Converter.get_requests_from_user(user_id)
 
-    test "deletes chosen request", %{conn: conn, request: request} do
-      conn = delete(conn, Routes.request_path(conn, :delete, request))
-      assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, Routes.request_path(conn, :show, request))
-      end
-    end
-  end
-
-  defp create_request(_) do
-    request = request_fixture()
-    %{request: request}
+    Enum.map(requests, fn request ->
+      %{
+        "conversion_rate" => request.conversion_rate,
+        "from_currency" => request.from_currency,
+        "id" => request.id,
+        "to_currency" => request.to_currency,
+        "user_id" => request.user_id,
+        "value" => request.value
+      }
+    end)
   end
 end
