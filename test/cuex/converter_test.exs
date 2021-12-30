@@ -79,7 +79,8 @@ defmodule Cuex.ConverterTest do
     end
 
     test "create_request/2 with invalid data returns an error" do
-      assert Converter.create_request(nil, nil) == {:error, %{body: "Internal server error", status_code: 500}}
+      assert Converter.create_request(nil, nil) ==
+               {:error, %{body: "Internal server error", status_code: 500}}
     end
   end
 
