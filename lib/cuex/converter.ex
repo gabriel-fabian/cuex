@@ -107,7 +107,11 @@ defmodule Cuex.Converter do
   def convert_currency(params) do
     Logger.info("Converter | Received request with invalid params=#{inspect(params)}")
 
-    {:error, %{status_code: 400, body: "Invalid params provided, params=#{inspect(params)}"}}
+    {:error,
+     %{
+       status_code: 400,
+       body: "Invalid params provided, missing params=#{inspect(missing_params(params))}"
+     }}
   end
 
   defp get_euro_exchange_rates(rates, from_currency, to_currency) do
@@ -151,5 +155,11 @@ defmodule Cuex.Converter do
 
   defp fetch_exchange_rate() do
     @exchange_api.fetch_rates()
+  end
+
+  defp missing_params(params) do
+    required_fields = ["from_currency", "to_currency", "value", "user_id"]
+
+    Enum.reject(required_fields, fn field -> params[field] end)
   end
 end
