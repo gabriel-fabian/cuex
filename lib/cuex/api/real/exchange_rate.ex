@@ -1,4 +1,8 @@
 defmodule Cuex.Api.Real.ExchangeRate do
+  @moduledoc """
+  A module to make requests to ExchangeRateApi and retrieve exchange_rates
+  """
+
   @config Application.compile_env(:cuex, :exchangerate)
   @url @config[:url]
   @api_key @config[:api_key]

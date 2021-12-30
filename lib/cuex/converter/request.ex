@@ -1,4 +1,7 @@
 defmodule Cuex.Converter.Request do
+  @moduledoc """
+  Schema to save the requests made to the API
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
