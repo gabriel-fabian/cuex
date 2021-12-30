@@ -7,6 +7,15 @@ defmodule CuexWeb.ErrorView do
   #   %{errors: %{detail: "Internal Server Error"}}
   # end
 
+  def render("error.json", %{status_code: status_code, body: response_body}) do
+    %{
+      errors: %{
+        detail: Phoenix.Controller.status_message_from_template("#{status_code}" <> ".json"),
+        response: response_body
+      }
+    }
+  end
+
   # By default, Phoenix returns the status message from
   # the template name. For example, "404.json" becomes
   # "Not Found".
