@@ -12,7 +12,7 @@ defmodule CuexWeb.Router do
       post("/", ConvertController, :convert_currency)
     end
 
-    scope "requests" do
+    scope "/requests" do
       get("/", RequestController, :index)
       get("/user/:user_id", RequestController, :show_requests_from_user)
     end

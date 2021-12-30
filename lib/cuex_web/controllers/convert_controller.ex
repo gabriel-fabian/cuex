@@ -10,9 +10,10 @@ defmodule CuexWeb.ConvertController do
   def convert_currency(conn, params) do
     Logger.info("ConvertController | Received request with params=#{inspect(params)}")
 
-    with {:ok, response} <- Converter.convert_currency(params) do
-      render(conn, "show.json", convert: response)
-    else
+    case Converter.convert_currency(params) do
+      {:ok, response} ->
+        render(conn, "show.json", convert: response)
+
       {:error, response} ->
         conn
         |> put_status(response.status_code)
