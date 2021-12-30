@@ -86,12 +86,12 @@ defmodule Cuex.Converter do
   end
 
   def convert_currency(
-        params = %{
+        %{
           "from_currency" => from_currency,
           "to_currency" => to_currency,
           "value" => value,
           "user_id" => _user_id
-        }
+        } = params
       ) do
     with {:ok, response} <- fetch_exchange_rate(),
          {:ok, exchange_rates} <-
