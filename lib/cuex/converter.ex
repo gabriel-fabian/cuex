@@ -3,7 +3,7 @@ defmodule Cuex.Converter do
   The Converter context.
   """
 
-  @exchange_api Application.get_env(:cuex, :exchangerate)[:api]
+  @exchange_api Application.compile_env(:cuex, :exchangerate)[:api]
 
   import Ecto.Query, warn: false
 

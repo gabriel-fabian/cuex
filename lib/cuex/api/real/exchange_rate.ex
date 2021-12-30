@@ -1,5 +1,5 @@
 defmodule Cuex.Api.Real.ExchangeRate do
-  @config Application.get_env(:cuex, :exchangerate)
+  @config Application.compile_env(:cuex, :exchangerate)
   @url @config[:url]
   @api_key @config[:api_key]
 
