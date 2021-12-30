@@ -4,7 +4,6 @@ defmodule CuexWeb.RequestController do
   require Logger
 
   alias Cuex.Converter
-  alias Cuex.Converter.Request
 
   action_fallback CuexWeb.FallbackController
 
