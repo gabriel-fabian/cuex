@@ -73,10 +73,16 @@ defmodule Cuex.Converter do
     |> Repo.insert()
   end
 
-  def create_request(attrs, conversion_rate) do
+  def create_request(attrs, conversion_rate) when is_map(attrs) do
     attrs
     |> Map.merge(%{"conversion_rate" => conversion_rate})
     |> create_request()
+  end
+
+  def create_request(attrs, _) do
+    Logger.info("Converter | create_request/2 received invalid attrs, attrs=#{inspect(attrs)}")
+
+    {:error, %{status_code: 500, body: "Internal server error"}}
   end
 
   def convert_currency(
