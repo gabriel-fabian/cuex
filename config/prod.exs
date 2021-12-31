@@ -1,4 +1,5 @@
 import Config
+
 config :cuex, :exchangerate,
   api: Cuex.Api.Real.ExchangeRate,
   url: "http://api.exchangeratesapi.io/v1/latest",
