@@ -9,7 +9,7 @@ defmodule Cuex.Api.Real.ExchangeRate do
 
   require Logger
 
-  def fetch_rates() do
+  def fetch_rates do
     @url
     |> HTTPoison.get(
       headers(),
@@ -30,11 +30,11 @@ defmodule Cuex.Api.Real.ExchangeRate do
     {:error, %{status_code: response.status_code, body: Poison.decode!(response.body)}}
   end
 
-  defp headers() do
+  defp headers do
     [{"Content-Type", "application/json"}]
   end
 
-  defp access_key_param() do
+  defp access_key_param do
     %{access_key: @api_key}
   end
 end

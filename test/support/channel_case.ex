@@ -15,6 +15,8 @@ defmodule CuexWeb.ChannelCase do
   this option is not recommended for other databases.
   """
 
+  # credo:disable-for-this-file
+
   use ExUnit.CaseTemplate
 
   using do
