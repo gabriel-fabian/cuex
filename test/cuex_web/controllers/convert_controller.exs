@@ -39,7 +39,7 @@ defmodule CuexWeb.ConvertControllerTest do
     end
   end
 
-  def get_last_request() do
+  def get_last_request do
     Repo.one(from(r in Request, limit: 1, order_by: [desc: r.inserted_at]))
   end
 

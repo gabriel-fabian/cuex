@@ -159,7 +159,7 @@ defmodule Cuex.Converter do
     {:error, %{status_code: 500, body: "Failed to save request into database"}}
   end
 
-  defp fetch_exchange_rate() do
+  defp fetch_exchange_rate do
     @exchange_api.fetch_rates()
   end
 

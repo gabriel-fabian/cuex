@@ -50,7 +50,7 @@ defmodule CuexWeb.RequestControllerTest do
     end
   end
 
-  defp index_response() do
+  defp index_response do
     requests = Converter.list_requests()
 
     Enum.map(requests, fn request ->
