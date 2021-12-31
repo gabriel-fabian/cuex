@@ -24,6 +24,12 @@ defmodule Cuex.Api.Real.ExchangeRate do
     {:ok, Poison.decode!(body)}
   end
 
+  defp handle_response({:ok, %HTTPoison.Response{status_code: status_code, body: body}}) do
+    Logger.info("ExchangeRateApi | Api returned a non 200 status code")
+
+    {:error, %{status_code: status_code, body: Poison.decode!(body)}}
+  end
+
   defp handle_response({:error, response}) do
     Logger.info("ExchangeRateApi | Failed to make request. response: #{inspect(response)}")
 
