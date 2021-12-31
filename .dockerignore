@@ -1,0 +1,16 @@
+.dockerignore
+.log
+tmp
+
+# Mix artifacts
+_build
+deps
+*.ez
+releases
+
+# Database files
+*.db
+*.db-*
+
+# Generate on crash by the VM
+erl_crash.dump
