@@ -10,7 +10,8 @@ defmodule Cuex.MixProject do
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: test_coverage()
     ]
   end
 
@@ -60,6 +61,32 @@ defmodule Cuex.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+    ]
+  end
+
+  defp test_coverage do
+    [
+      # Ignore Phoenix default modules and views
+      ignore_modules: [
+        Cuex.Application,
+        Cuex.DataCase,
+        Cuex.Repo,
+        CuexWeb,
+        CuexWeb.ChangesetView,
+        CuexWeb.ChangesetView,
+        CuexWeb.ChannelCase,
+        CuexWeb.ConnCase,
+        CuexWeb.ConvertController,
+        CuexWeb.ConvertView,
+        CuexWeb.Endpoint,
+        CuexWeb.ErrorHelpers,
+        CuexWeb.ErrorView,
+        CuexWeb.FallbackController,
+        CuexWeb.RequestView,
+        CuexWeb.Router,
+        CuexWeb.Router.Helpers,
+        CuexWeb.Telemetry
+      ]
     ]
   end
 end
