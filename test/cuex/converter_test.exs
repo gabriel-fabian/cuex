@@ -70,18 +70,6 @@ defmodule Cuex.ConverterTest do
     test "create_request/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Converter.create_request(@invalid_attrs)
     end
-
-    test "create_request/2 with valid data creates a request" do
-      modified_attrs = Map.delete(@valid_attrs, "conversion_rate")
-
-      assert {:ok, %Request{} = request} = Converter.create_request(modified_attrs, 42.5)
-      assert request.conversion_rate == 42.5
-    end
-
-    test "create_request/2 with invalid data returns an error" do
-      assert Converter.create_request(nil, nil) ==
-               {:error, %{body: "Internal server error", status_code: 500}}
-    end
   end
 
   describe "convert_currency/1" do
@@ -101,7 +89,15 @@ defmodule Cuex.ConverterTest do
       assert response.user_id == 1
     end
 
-    test "with invalid params returns an error" do
+    test "when value is not a number" do
+      invalid_params = Map.merge(@valid_params, %{"value" => "not_a_number"})
+
+      assert {:error, response} = Converter.convert_currency(invalid_params)
+
+      assert response == %{body: "Value not_a_number is not a number", status_code: 400}
+    end
+
+    test "with params missing returns an error" do
       assert {:error, response} = Converter.convert_currency(nil)
 
       assert response == %{

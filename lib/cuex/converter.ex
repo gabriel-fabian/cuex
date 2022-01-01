@@ -73,13 +73,13 @@ defmodule Cuex.Converter do
     |> Repo.insert()
   end
 
-  def create_request(attrs, conversion_rate) when is_map(attrs) do
+  defp create_request(attrs, conversion_rate) when is_map(attrs) do
     attrs
     |> Map.merge(%{"conversion_rate" => conversion_rate})
     |> create_request()
   end
 
-  def create_request(attrs, _) do
+  defp create_request(attrs, _) do
     Logger.info("Converter | create_request/2 received invalid attrs, attrs=#{inspect(attrs)}")
 
     {:error, %{status_code: 500, body: "Internal server error"}}
@@ -93,10 +93,10 @@ defmodule Cuex.Converter do
           "user_id" => _user_id
         } = params
       ) do
-    with {:ok, response} <- fetch_exchange_rate(),
-         {:ok, exchange_rates} <-
+    with {:ok, response} <- fetch_api_exchange_rates(),
+         {:ok, euro_exchange_rates} <-
            get_euro_exchange_rates(response["rates"], from_currency, to_currency),
-         {:ok, converted_value} <- convert_values(exchange_rates, value),
+         {:ok, converted_value} <- convert_values(euro_exchange_rates, value),
          {:ok, conversion_rate} <- get_conversion_rate(value, converted_value),
          {:ok, saved_request} <- create_request(params, conversion_rate),
          {:ok, response} <- handle_response(saved_request, converted_value) do
@@ -150,16 +150,7 @@ defmodule Cuex.Converter do
 
   defp get_conversion_rate(value, converted_value), do: {:ok, converted_value / value}
 
-  defp handle_response(%Request{} = request, converted_value),
-    do: {:ok, Map.merge(request, %{converted_value: converted_value})}
-
-  defp handle_response(_, _) do
-    Logger.info("Converter | Failed to save request to database")
-
-    {:error, %{status_code: 500, body: "Failed to save request into database"}}
-  end
-
-  defp fetch_exchange_rate do
+  defp fetch_api_exchange_rates do
     @exchange_api.fetch_rates()
   end
 
@@ -167,5 +158,14 @@ defmodule Cuex.Converter do
     required_fields = ["from_currency", "to_currency", "value", "user_id"]
 
     Enum.reject(required_fields, fn field -> params[field] end)
+  end
+
+  defp handle_response(%Request{} = request, converted_value),
+    do: {:ok, Map.merge(request, %{converted_value: converted_value})}
+
+  defp handle_response(_, _) do
+    Logger.error("Converter | Failed to save request to database")
+
+    {:error, %{status_code: 500, body: "Failed to save request into database"}}
   end
 end
