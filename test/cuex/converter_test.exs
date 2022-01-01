@@ -93,8 +93,14 @@ defmodule Cuex.ConverterTest do
       invalid_params = Map.merge(@valid_params, %{"value" => "not_a_number"})
 
       assert {:error, response} = Converter.convert_currency(invalid_params)
-
       assert response == %{body: "Value not_a_number is not a number", status_code: 400}
+    end
+
+    test "when currency is not valid" do
+      invalid_params = Map.merge(@valid_params, %{"from_currency" => "FOO"})
+
+      assert {:error, response} = Converter.convert_currency(invalid_params)
+      assert response == %{body: "Invalid currency type provided. Currency=FOO", status_code: 400}
     end
 
     test "with params missing returns an error" do
