@@ -11,7 +11,13 @@ defmodule Cuex.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      test_coverage: test_coverage()
+      test_coverage: test_coverage(),
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
     ]
   end
 
@@ -45,7 +51,10 @@ defmodule Cuex.MixProject do
       {:poison, "~> 2.0"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:credo, "~> 1.6", only: [:dev, :test]}
+
+      ## Separated by environments
+      {:credo, "~> 1.6", only: [:dev, :test]},
+      {:excoveralls, "~> 0.10", only: :test}
     ]
   end
 
@@ -66,6 +75,7 @@ defmodule Cuex.MixProject do
 
   defp test_coverage do
     [
+      tool: ExCoveralls,
       # Ignore Phoenix default modules and views
       ignore_modules: [
         Cuex.Application,
