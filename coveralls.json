@@ -1,0 +1,19 @@
+{
+  "skip_files": [
+    "application.ex",
+    "channel_case.ex",
+    "conn_case.ex",
+    "cuex_web.ex",
+    "cuex.ex",
+    "data_case.ex",
+    "endpoint.ex",
+    "fallback_controller.ex",
+    "repo.ex",
+    "router.ex",
+    "telemetry.ex",
+    "temeletry.ex",
+    "views",
+
+    "lib/cuex/api/real/exchange_rate.ex"
+  ]
+}
