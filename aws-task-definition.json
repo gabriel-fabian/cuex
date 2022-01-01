@@ -5,21 +5,13 @@
     {
       "dnsSearchDomains": null,
       "environmentFiles": null,
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "secretOptions": null,
-        "options": {
-          "awslogs-group": "/ecs/cuex-task",
-          "awslogs-region": "sa-east-1",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
+      "logConfiguration": null,
       "entryPoint": null,
       "portMappings": [
         {
-          "hostPort": 80,
+          "hostPort": 4000,
           "protocol": "tcp",
-          "containerPort": 80
+          "containerPort": 4000
         }
       ],
       "command": null,
@@ -34,14 +26,14 @@
       "secrets": null,
       "dockerSecurityOptions": null,
       "memory": null,
-      "memoryReservation": 150,
+      "memoryReservation": 200,
       "volumesFrom": [],
       "stopTimeout": null,
       "image": "822879098180.dkr.ecr.sa-east-1.amazonaws.com/cuex-repo:latest",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
-      "disableNetworking": false,
+      "disableNetworking": true,
       "interactive": null,
       "healthCheck": null,
       "essential": true,
@@ -50,48 +42,28 @@
       "extraHosts": null,
       "pseudoTerminal": null,
       "user": null,
-      "readonlyRootFilesystem": true,
-      "dockerLabels": {
-        "Project": "cuex"
-      },
+      "readonlyRootFilesystem": null,
+      "dockerLabels": null,
       "systemControls": null,
       "privileged": null,
       "name": "cuex-app"
     }
   ],
   "placementConstraints": [],
-  "memory": "512",
-  "taskRoleArn": null,
+  "memory": null,
+  "taskRoleArn": "arn:aws:iam::822879098180:role/ecsTaskExecutionRole",
   "compatibilities": [
-    "EC2",
-    "FARGATE"
+    "EXTERNAL",
+    "EC2"
   ],
-  "taskDefinitionArn": "arn:aws:ecs:sa-east-1:822879098180:task-definition/cuex-task:1",
-  "family": "cuex-task",
+  "taskDefinitionArn": "arn:aws:ecs:sa-east-1:822879098180:task-definition/cuex-task-ec2-based:1",
+  "family": "cuex-task-ec2-based",
   "requiresAttributes": [
     {
       "targetId": null,
       "targetType": null,
       "value": null,
-      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
-      "name": "ecs.capability.execution-role-awslogs"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
       "name": "com.amazonaws.ecs.capability.ecr-auth"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
     },
     {
       "targetId": null,
@@ -109,31 +81,22 @@
       "targetId": null,
       "targetType": null,
       "value": null,
+      "name": "com.amazonaws.ecs.capability.task-iam-role"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
       "name": "ecs.capability.execution-role-ecr-pull"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-    },
-    {
-      "targetId": null,
-      "targetType": null,
-      "value": null,
-      "name": "ecs.capability.task-eni"
     }
   ],
   "pidMode": null,
   "requiresCompatibilities": [
-    "FARGATE"
+    "EC2"
   ],
-  "networkMode": "awsvpc",
-  "runtimePlatform": {
-    "operatingSystemFamily": "LINUX",
-    "cpuArchitecture": null
-  },
-  "cpu": "256",
+  "networkMode": null,
+  "runtimePlatform": null,
+  "cpu": null,
   "revision": 1,
   "status": "ACTIVE",
   "inferenceAccelerators": null,
