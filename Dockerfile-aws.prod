@@ -1,0 +1,27 @@
+FROM elixir:1.13.1-alpine
+
+RUN apk update && \
+    apk add \
+    build-base
+
+ENV PORT=80
+ENV MIX_ENV=prod
+
+WORKDIR /cuex
+
+COPY . ./
+
+# install hex + rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+# install mix dependencies
+RUN mix deps.get --only ${MIX_ENV}
+RUN mix compile
+
+# Setup database
+RUN mix setup
+
+USER nobody
+
+CMD [ "mix", "phx.server"]

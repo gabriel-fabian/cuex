@@ -10,10 +10,10 @@ if config_env() == :prod do
     database: Path.expand("../cuex_prod.db", Path.dirname(__ENV__.file)),
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  port = String.to_integer(System.get_env("PORT") || "80")
 
   config :cuex, CuexWeb.Endpoint,
-    url: [scheme: "https", host: "cuex-app.herokuapp.com", port: 443],
+    url: [scheme: "https", host: "ec2-18-230-145-172.sa-east-1.compute.amazonaws.com", port: 443],
     http: [
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
