@@ -24,4 +24,6 @@ RUN mix setup
 
 USER nobody
 
+EXPOSE 4000
+
 CMD [ "mix", "phx.server"]
