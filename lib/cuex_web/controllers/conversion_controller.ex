@@ -28,11 +28,8 @@ defmodule CuexWeb.ConversionController do
       {:ok, response} ->
         render(conn, "show.json", conversion: response)
 
-      {:error, response} ->
-        conn
-        |> put_status(response.status_code)
-        |> put_view(CuexWeb.ErrorView)
-        |> render("error.json", %{status_code: response.status_code, body: response.body})
+      error ->
+        error
     end
   end
 end
