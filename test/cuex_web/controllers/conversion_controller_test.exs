@@ -47,12 +47,34 @@ defmodule CuexWeb.ConversionControllerTest do
       assert Enum.count(response_data) == 3
     end
 
+    test "lists all conversion histories with pagination", %{conn: conn} do
+      paginated_url = Routes.conversion_path(conn, :index) <> "?page=1&page_size=2"
+
+      conn = get(conn, paginated_url)
+      response_data = json_response(conn, 200)["data"]
+
+      assert Enum.count(response_data) == 2
+    end
+
     test "lists all conversions histories from user", %{conn: conn, first_user_id: user_id} do
       conn = get(conn, Routes.conversion_path(conn, :index, user_id))
       response_data = json_response(conn, 200)["data"]
 
       assert response_data == conversions_from_user_response(user_id)
       assert Enum.count(response_data) == 2
+    end
+
+    test "lists all conversions histories from user paginated", %{
+      conn: conn,
+      first_user_id: user_id
+    } do
+      paginated_url = Routes.conversion_path(conn, :index, user_id) <> "?page=1&page_size=1"
+
+      conn = get(conn, paginated_url)
+      response_data = json_response(conn, 200)["data"]
+
+      assert response_data == conversions_from_user_response(user_id)
+      assert Enum.count(response_data) == 1
     end
   end
 
