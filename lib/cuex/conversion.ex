@@ -1,6 +1,6 @@
-defmodule Cuex.Converter do
+defmodule Cuex.Conversion do
   @moduledoc """
-  The Converter context.
+  The Conversion context.
   """
 
   @exchange_api Application.compile_env(:cuex, :exchangerate)[:api]
@@ -9,78 +9,64 @@ defmodule Cuex.Converter do
 
   require Logger
 
-  alias Cuex.Converter.Request
+  alias Cuex.Conversion.ConversionHistory
   alias Cuex.Repo
 
   @doc """
-  Returns the list of requests.
+  Returns the list of ConversionHistory.
 
   ## Examples
 
-      iex> list_requests()
-      [%Request{}, ...]
+      iex> list_conversions()
+      [%ConversionHistory{}, ...]
 
   """
-  def list_requests do
-    Repo.all(Request)
+  def list_conversions do
+    Repo.all(ConversionHistory)
   end
 
   @doc """
-  Gets a single request.
-
-  Raises `Ecto.NoResultsError` if the Request does not exist.
+  Returns the list of conversions for a given user_id
 
   ## Examples
 
-      iex> get_request!(123)
-      %Request{}
-
-      iex> get_request!(456)
-      ** (Ecto.NoResultsError)
-
+      iex> get_conversions_from_user(2)
+      [%ConversionHistory{}, ...]
   """
-  def get_request!(id), do: Repo.get!(Request, id)
-
-  @doc """
-  Returns the list of requests for a given user_id
-
-  ## Examples
-
-      iex> get_requests_from_user(2)
-      [%Request{}, ...]
-  """
-  def get_requests_from_user(user_id) do
-    Request
+  def get_conversions_from_user(user_id) do
+    ConversionHistory
     |> where(user_id: ^user_id)
     |> Repo.all()
   end
 
   @doc """
-  Creates a request.
+  Creates a conversion_history.
 
   ## Examples
 
-      iex> create_request(%{field: value})
-      {:ok, %Request{}}
+      iex> create_conversion_history(%{field: value})
+      {:ok, %ConversionHistory{}}
 
-      iex> create_request(%{field: bad_value})
+      iex> create_conversion_history(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_request(attrs \\ %{}) do
-    %Request{}
-    |> Request.changeset(attrs)
+  def create_conversion_history(attrs \\ %{}) do
+    %ConversionHistory{}
+    |> ConversionHistory.changeset(attrs)
     |> Repo.insert()
   end
 
-  defp create_request(attrs, conversion_rate) when is_map(attrs) do
+  defp create_conversion_history(attrs, conversion_rate) when is_map(attrs) do
     attrs
     |> Map.merge(%{"conversion_rate" => conversion_rate})
-    |> create_request()
+    |> create_conversion_history()
   end
 
-  defp create_request(attrs, _) do
-    Logger.info("Converter | create_request/2 received invalid attrs, attrs=#{inspect(attrs)}")
+  defp create_conversion_history(attrs, _) do
+    Logger.info(
+      "Conversion | create_conversion_history/2 received invalid attrs, attrs=#{inspect(attrs)}"
+    )
 
     {:error, %{status_code: 500, body: "Internal server error"}}
   end
@@ -98,8 +84,8 @@ defmodule Cuex.Converter do
            get_euro_exchange_rates(response["rates"], from_currency, to_currency),
          {:ok, converted_value} <- convert_values(euro_exchange_rates, value),
          {:ok, conversion_rate} <- get_conversion_rate(value, converted_value),
-         {:ok, saved_request} <- create_request(params, conversion_rate),
-         {:ok, response} <- handle_response(saved_request, converted_value) do
+         {:ok, saved_conversion} <- create_conversion_history(params, conversion_rate),
+         {:ok, response} <- handle_response(saved_conversion, converted_value) do
       {:ok, response}
     else
       {:error, response} ->
@@ -111,7 +97,7 @@ defmodule Cuex.Converter do
   end
 
   def convert_currency(params) do
-    Logger.info("Converter | Received request with invalid params=#{inspect(params)}")
+    Logger.info("Conversion | Received request with invalid params=#{inspect(params)}")
 
     {:error,
      %{
@@ -126,7 +112,7 @@ defmodule Cuex.Converter do
       {:ok, {rates[from_currency], rates[to_currency]}}
     else
       {false, currency} ->
-        Logger.info("Converter | Fail to convert. Invalid currency type received")
+        Logger.info("Conversion | Fail to convert. Invalid currency type received")
 
         {:error,
          %{
@@ -143,7 +129,7 @@ defmodule Cuex.Converter do
     do: {:ok, value / from_rate * to_rate}
 
   defp convert_values(_, value) do
-    Logger.info("Converter | Fail to convert. Value, #{value}, is not a number")
+    Logger.info("Conversion | Fail to convert. Value, #{value}, is not a number")
 
     {:error, %{status_code: 400, body: "Value #{value} is not a number"}}
   end
@@ -160,12 +146,12 @@ defmodule Cuex.Converter do
     Enum.reject(required_fields, fn field -> params[field] end)
   end
 
-  defp handle_response(%Request{} = request, converted_value),
-    do: {:ok, Map.merge(request, %{converted_value: converted_value})}
+  defp handle_response(%ConversionHistory{} = saved_conversion, converted_value),
+    do: {:ok, Map.merge(saved_conversion, %{converted_value: converted_value})}
 
   defp handle_response(_, _) do
-    Logger.error("Converter | Failed to save request to database")
+    Logger.error("Conversion | Failed to save conversion_history to database")
 
-    {:error, %{status_code: 500, body: "Failed to save request into database"}}
+    {:error, %{status_code: 422, body: "Failed to save conversion_history into database"}}
   end
 end

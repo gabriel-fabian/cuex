@@ -9,12 +9,12 @@ defmodule CuexWeb.Router do
     pipe_through :api
 
     scope "/convert" do
-      post("/", ConvertController, :convert_currency)
+      post("/", ConversionController, :convert_currency)
     end
 
-    scope "/requests" do
-      get("/", RequestController, :index)
-      get("/user/:user_id", RequestController, :show_requests_from_user)
+    scope "/conversions" do
+      get("/", ConversionController, :index)
+      get("/user/:user_id", ConversionController, :get_conversions_from_user)
     end
   end
 

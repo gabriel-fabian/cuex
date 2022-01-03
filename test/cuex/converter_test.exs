@@ -1,12 +1,12 @@
-defmodule Cuex.ConverterTest do
+defmodule Cuex.ConversionTest do
   use Cuex.DataCase
 
-  alias Cuex.Converter
+  alias Cuex.Conversion
 
-  describe "requests" do
-    alias Cuex.Converter.Request
+  describe "conversion_histories" do
+    alias Cuex.Conversion.ConversionHistory
 
-    import Cuex.ConverterFixtures
+    import Cuex.ConversionFixtures
 
     @invalid_attrs %{
       "conversion_rate" => nil,
@@ -25,50 +25,57 @@ defmodule Cuex.ConverterTest do
     }
 
     setup do
-      first_request = fixture(:request, @valid_attrs)
-      second_request = fixture(:request, Map.merge(@valid_attrs, %{"user_id" => 43}))
-      third_request = fixture(:request, @valid_attrs)
+      first_conversion_history = fixture(:conversion_history, @valid_attrs)
+
+      second_conversion_history =
+        fixture(:conversion_history, Map.merge(@valid_attrs, %{"user_id" => 43}))
+
+      third_conversion_history = fixture(:conversion_history, @valid_attrs)
 
       %{
         user_id: 42,
-        first_request: first_request,
-        second_request: second_request,
-        third_request: third_request
+        first_conversion_history: first_conversion_history,
+        second_conversion_history: second_conversion_history,
+        third_conversion_history: third_conversion_history
       }
     end
 
-    test "list_requests/0 returns all requests", %{
-      first_request: first_request,
-      second_request: second_request,
-      third_request: third_request
+    test "list_conversions/0 returns all conversions", %{
+      first_conversion_history: first_conversion_history,
+      second_conversion_history: second_conversion_history,
+      third_conversion_history: third_conversion_history
     } do
-      assert Converter.list_requests() == [first_request, second_request, third_request]
+      assert Conversion.list_conversions() == [
+               first_conversion_history,
+               second_conversion_history,
+               third_conversion_history
+             ]
     end
 
-    test "get_request!/1 returns the request with given id" do
-      request = fixture(:request)
-      assert Converter.get_request!(request.id) == request
-    end
-
-    test "get_request_from_user/1 returns all request from user", %{
+    test "get_conversions_from_user/1 returns all conversions from user", %{
       user_id: user_id,
-      first_request: first_request,
-      third_request: third_request
+      first_conversion_history: first_conversion_history,
+      third_conversion_history: third_conversion_history
     } do
-      assert Converter.get_requests_from_user(user_id) == [first_request, third_request]
+      assert Conversion.get_conversions_from_user(user_id) == [
+               first_conversion_history,
+               third_conversion_history
+             ]
     end
 
-    test "create_request/1 with valid data creates a request" do
-      assert {:ok, %Request{} = request} = Converter.create_request(@valid_attrs)
-      assert request.conversion_rate == @valid_attrs["conversion_rate"]
-      assert request.from_currency == @valid_attrs["from_currency"]
-      assert request.to_currency == @valid_attrs["to_currency"]
-      assert request.user_id == @valid_attrs["user_id"]
-      assert request.value == @valid_attrs["value"]
+    test "create_conversion_history/1 with valid data creates a conversion_history" do
+      assert {:ok, %ConversionHistory{} = conversion_history} =
+               Conversion.create_conversion_history(@valid_attrs)
+
+      assert conversion_history.conversion_rate == @valid_attrs["conversion_rate"]
+      assert conversion_history.from_currency == @valid_attrs["from_currency"]
+      assert conversion_history.to_currency == @valid_attrs["to_currency"]
+      assert conversion_history.user_id == @valid_attrs["user_id"]
+      assert conversion_history.value == @valid_attrs["value"]
     end
 
-    test "create_request/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Converter.create_request(@invalid_attrs)
+    test "create_conversion_history/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Conversion.create_conversion_history(@invalid_attrs)
     end
   end
 
@@ -81,7 +88,7 @@ defmodule Cuex.ConverterTest do
     }
 
     test "with valid params returns converted value" do
-      assert {:ok, response} = Converter.convert_currency(@valid_params)
+      assert {:ok, response} = Conversion.convert_currency(@valid_params)
       assert response.from_currency == "EUR"
       assert response.to_currency == "USD"
       assert response.value == 10
@@ -92,19 +99,19 @@ defmodule Cuex.ConverterTest do
     test "when value is not a number" do
       invalid_params = Map.merge(@valid_params, %{"value" => "not_a_number"})
 
-      assert {:error, response} = Converter.convert_currency(invalid_params)
+      assert {:error, response} = Conversion.convert_currency(invalid_params)
       assert response == %{body: "Value not_a_number is not a number", status_code: 400}
     end
 
     test "when currency is not valid" do
       invalid_params = Map.merge(@valid_params, %{"from_currency" => "FOO"})
 
-      assert {:error, response} = Converter.convert_currency(invalid_params)
+      assert {:error, response} = Conversion.convert_currency(invalid_params)
       assert response == %{body: "Invalid currency type provided. Currency=FOO", status_code: 400}
     end
 
     test "with params missing returns an error" do
-      assert {:error, response} = Converter.convert_currency(nil)
+      assert {:error, response} = Conversion.convert_currency(nil)
 
       assert response == %{
                body:
