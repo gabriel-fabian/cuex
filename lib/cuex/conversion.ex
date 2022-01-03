@@ -111,18 +111,10 @@ defmodule Cuex.Conversion do
     |> Repo.insert()
   end
 
-  defp create_conversion_history(attrs, conversion_rate) when is_map(attrs) do
+  defp create_conversion_history(attrs, conversion_rate) do
     attrs
     |> Map.merge(%{"conversion_rate" => conversion_rate})
     |> create_conversion_history()
-  end
-
-  defp create_conversion_history(attrs, _) do
-    Logger.info(
-      "Conversion | create_conversion_history/2 received invalid attrs, attrs=#{inspect(attrs)}"
-    )
-
-    {:error, %{status_code: 500, body: "Internal server error"}}
   end
 
   defp parse_params(params) do
