@@ -7,17 +7,17 @@ defmodule CuexWeb.ConversionController do
 
   action_fallback CuexWeb.FallbackController
 
+  def index(conn, %{"user_id" => user_id}) do
+    Logger.info("ConversionController | Received show, user_id=#{user_id}")
+
+    conversion_histories = Conversion.get_conversions_from_user(user_id)
+    render(conn, "index.json", conversion_histories: conversion_histories)
+  end
+
   def index(conn, _params) do
     Logger.info("ConversionController | Received index call")
 
     conversion_histories = Conversion.list_conversions()
-    render(conn, "index.json", conversion_histories: conversion_histories)
-  end
-
-  def show(conn, %{"user_id" => user_id}) do
-    Logger.info("ConversionController | Received show, user_id=#{user_id}")
-
-    conversion_histories = Conversion.get_conversions_from_user(user_id)
     render(conn, "index.json", conversion_histories: conversion_histories)
   end
 

@@ -12,7 +12,7 @@ defmodule CuexWeb.Router do
 
     scope "/conversions" do
       get("/", ConversionController, :index)
-      get("/user/:user_id", ConversionController, :show)
+      get("/user/:user_id", ConversionController, :index)
     end
   end
 

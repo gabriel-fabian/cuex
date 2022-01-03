@@ -38,7 +38,7 @@ defmodule CuexWeb.ConversionControllerTest do
     }
   end
 
-  describe "index" do
+  describe "index/2" do
     test "lists all conversion histories", %{conn: conn} do
       conn = get(conn, Routes.conversion_path(conn, :index))
       response_data = json_response(conn, 200)["data"]
@@ -46,11 +46,9 @@ defmodule CuexWeb.ConversionControllerTest do
       assert response_data == index_response()
       assert Enum.count(response_data) == 3
     end
-  end
 
-  describe "show/2" do
-    test "lists all conversions from user", %{conn: conn, first_user_id: user_id} do
-      conn = get(conn, Routes.conversion_path(conn, :show, user_id))
+    test "lists all conversions histories from user", %{conn: conn, first_user_id: user_id} do
+      conn = get(conn, Routes.conversion_path(conn, :index, user_id))
       response_data = json_response(conn, 200)["data"]
 
       assert response_data == conversions_from_user_response(user_id)
