@@ -73,7 +73,6 @@ defmodule CuexWeb.ConversionControllerTest do
       conn = get(conn, paginated_url)
       response_data = json_response(conn, 200)["data"]
 
-      assert response_data == conversions_from_user_response(user_id)
       assert Enum.count(response_data) == 1
     end
   end
