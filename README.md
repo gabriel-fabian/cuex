@@ -3,16 +3,15 @@
 [![Build Status](https://github.com/gabriel-fabian/cuex/actions/workflows/ci.yml/badge.svg)](https://github.com/gabriel-fabian/cuex/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/gabriel-fabian/cuex/badge.svg?branch=master)](https://coveralls.io/github/gabriel-fabian/cuex?branch=master)
 
-CuEx is a Currency Exchange API made with Elixir + Phoenix based on real time exchange rates of an external API.
+## Table of Contents
 
-## Contents
-
-- [Used Technologies](#used-technologies)
-  * [Phoenix](#phoenix)
-  * [Heroku](#heroku)
-  * [Docker](#docker)
-  * [Coveralls](#coveralls)
-  * [Github Actins](#github-actions)
+- [Introduction](#introduction)
+  - [Used Technologies](#used-technologies)
+    * [Phoenix](#phoenix)
+    * [Heroku](#heroku)
+    * [Docker](#docker)
+    * [Coveralls](#coveralls)
+    * [Github Actins](#github-actions)
 - [Development Setup](#development-setup)
   * [Setup With Docker](#setup-with-docker-recommended)
   * [Setup With Local Environment](#setup-with-local-environment-not-recommended)
@@ -22,30 +21,37 @@ CuEx is a Currency Exchange API made with Elixir + Phoenix based on real time ex
   * [Retrieving User Requests](#retrieving-user-requests)
 - [Available Currencies](#available-currencies)
 
-## Used Technologies
 
-### Phoenix
+## **Introduction**
+
+CuEx is a Currency Exchange API made with Elixir + Phoenix.
+
+The purpose of this project is to make a RESTful API to provide a currency conversion between two currencies. It's based on exchange rates from an external API that provides exchange rates for Euro currency.
+
+## **Used Technologies**
+
+### **Phoenix**
 [Phoenix](https://www.phoenixframework.org) is a well structured and production ready framework that provides a quick way to create APIs.
 
-### Heroku
+### **Heroku**
 [Heroku](https://heroku.com) is a cloud platform to host apps. It provides a free plan and easy to go setup with Github for deployment and application testing.
 
-### Docker
+### **Docker**
 Docker is used to provide an easy setup for development and production deployment.
 Don't worry to setup your environment locally, Docker will make a container with the application ready for testing and without the pollution of the `_build` and `deps` folders. Just focus on the code.
 
-### Coveralls
+### **Coveralls**
 [Coveralls](https://coveralls.io/) can host test coverage details for you application.
 Used with [ExCoveralls](https://github.com/parroty/excoveralls) dependency to automatically send the coverage details to the Coveralls website.
 
-### Github Actions
-Github Actions is used to run CI environment. It assures that the project is building, none of the tests are breaking and check code lint.
+### **Github Actions**
+Github Actions is used to run CI environment. It assures that the project is building, none of the tests are breaking and check code linting.
 
-##  Development Setup
+##  **Development Setup**
 
 Note that in the development environment the external API is mocked and doesn't offer real time rates.
 
-### Setup With Docker (Recommended)
+### **Setup With Docker (Recommended)**
 
 This setup is recommended because it provides an easy and fast method to run the project without worries of setting up the elixir and phoenix environment, besides it does not polute the repository with the `_build` and `deps` files generated on Phoenix builds.
 
@@ -57,7 +63,7 @@ This setup is recommended because it provides an easy and fast method to run the
 
 Now the application is up and running on `localhost:4000`
 
-### Setup With Local Environment (Not Recommended)
+### **Setup With Local Environment (Not Recommended)**
 
 ⚠️ This doc will not cover the entire configuration process.
 
@@ -82,11 +88,11 @@ Check the official [Elixir](https://elixir-lang.org/install.html) or [Phoenix](h
 
 Now the application is up and running on `localhost:4000`
 
-## Available Endpoints
+## **Available Endpoints**
 
 This API offers three endpoints, one for converting values between two currencies and two other for listing all requests or user specific ones.
 
-### Converting Currencies
+### **Converting Currencies**
 
 To convert value between two currencies, you can make a `POST` request to `https://cuex-app.herokuapp.com/api/convert` for the deployed app on Heroku or `localhost:4000/api/convert` when using in development mode. This request needs a Json body with valid currency types as follows:
 
@@ -94,22 +100,26 @@ To convert value between two currencies, you can make a `POST` request to `https
 {
   "from_currency":"EUR",
   "to_currency":"BRL",
-  "value":10,
+  "value":10.5,
   "user_id": 1
 }
 ```
 
 For a list containing all currencies check the [Available Currencies](#available-currencies) section.
 
-### Retrieving Requests Index
+### **Retrieving Conversions Index**
 
-This endpoint lists all requests made to the API. Simply do a `GET` request to `https://cuex-app.herokuapp.com/api/requests` or `localhost:4000/api/requests`
+This endpoint lists all conversions made by the API. Simply do a `GET` request to `https://cuex-app.herokuapp.com/api/conversions` or `localhost:4000/api/conversions` to list all conversions.
 
-### Retrieving User Requests
+This route accepts pagination as an option. If you desire to paginate your requests just add a query param to specify the page and number of rows. Ex: `https://cuex-app.herokuapp.com/api/conversions?page=1&page_size=15`
 
-This endpoint lists all requests made to the API to the given user id. Simply do a `GET` request to `https://cuex-app.herokuapp.com/api/requests/user/:id` or `localhost:4000/api/requests/user/:id` where `:id` needs to be overwritten by the specific user id.
+### **Retrieving User conversions**
 
-## Available Currencies
+This endpoint lists all conversions made to the API by the given user id. Simply do a `GET` request to `https://cuex-app.herokuapp.com/api/conversions/user/:id` or `localhost:4000/api/conversions/user/:id` where `:id` needs to be overwritten by the specific user id.
+
+This route accepts pagination as an option. If you desire to paginate your requests just add a query param to specify the page and number of rows. Ex: `https://cuex-app.herokuapp.com/api/conversions/user/1?page=1&page_size=15`
+
+## **Available Currencies**
 
 This is a list containing all currencies available for conversion.
 <details>
