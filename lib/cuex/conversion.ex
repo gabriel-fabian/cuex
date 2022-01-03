@@ -9,8 +9,9 @@ defmodule Cuex.Conversion do
 
   require Logger
 
-  alias Cuex.Conversion.ConversionHistory
+  alias Cuex.Conversion.{ConversionHistory, Formalization}
   alias Cuex.Repo
+  alias Ecto.Changeset
 
   @doc """
   Convert the given currencies based on Euro exchange rates and save the request to ConversionHistory in database.
@@ -32,11 +33,12 @@ defmodule Cuex.Conversion do
         %{
           "from_currency" => from_currency,
           "to_currency" => to_currency,
-          "value" => value,
+          "value" => _value,
           "user_id" => _user_id
         } = params
       ) do
-    with {true, _} <- is_valid_value?(value),
+    with {:ok, parsed_params} <- parse_params(params),
+         {true, value} <- is_valid_value?(parsed_params.value),
          {:ok, response} <- @exchange_api.fetch_rates(),
          {:ok, base_currency_exchange_rates} <-
            get_base_currency_exchange_rate(response["rates"], from_currency, to_currency),
@@ -123,6 +125,18 @@ defmodule Cuex.Conversion do
     {:error, %{status_code: 500, body: "Internal server error"}}
   end
 
+  defp parse_params(params) do
+    changeset = Formalization.changeset(params)
+
+    case changeset do
+      %Changeset{valid?: true, changes: changes} ->
+        {:ok, changes}
+
+      changeset ->
+        {:error, changeset}
+    end
+  end
+
   defp is_valid_value?(value) when value > 0, do: {true, value}
 
   defp is_valid_value?(_),
@@ -147,14 +161,8 @@ defmodule Cuex.Conversion do
   defp is_valid_currency?(rates, currency),
     do: {is_integer(rates[currency]) or is_float(rates[currency]), currency}
 
-  defp convert_values({from_rate, to_rate}, value) when is_integer(value) or is_float(value),
+  defp convert_values({from_rate, to_rate}, value),
     do: {:ok, value / from_rate * to_rate}
-
-  defp convert_values(_, value) do
-    Logger.info("Conversion | Fail to convert. Value, #{value}, is not a number")
-
-    {:error, %{status_code: 400, body: "Value #{value} is not a number"}}
-  end
 
   defp get_conversion_rate(value, converted_value), do: {:ok, converted_value / value}
 
