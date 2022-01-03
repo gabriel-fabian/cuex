@@ -79,6 +79,12 @@ defmodule Cuex.Conversion do
     Repo.all(ConversionHistory)
   end
 
+  def list_conversions(page, page_size) do
+    ConversionHistory
+    |> order_by(desc: :id)
+    |> Repo.paginate(page: page, page_size: page_size)
+  end
+
   @doc """
   Returns the list of conversions for a given user_id
 
@@ -91,6 +97,13 @@ defmodule Cuex.Conversion do
     ConversionHistory
     |> where(user_id: ^user_id)
     |> Repo.all()
+  end
+
+  def get_conversions_from_user(user_id, page, page_size) do
+    ConversionHistory
+    |> where(user_id: ^user_id)
+    |> order_by(desc: :id)
+    |> Repo.paginate(page: page, page_size: page_size)
   end
 
   @doc """
