@@ -166,10 +166,4 @@ defmodule Cuex.Conversion do
 
   defp handle_response(%ConversionHistory{} = saved_conversion, converted_value),
     do: {:ok, Map.merge(saved_conversion, %{converted_value: converted_value})}
-
-  defp handle_response(_, _) do
-    Logger.error("Conversion | Failed to save conversion_history to database")
-
-    {:error, %{status_code: 422, body: "Failed to save conversion_history into database"}}
-  end
 end
