@@ -43,6 +43,7 @@ defmodule Cuex.MixProject do
       {:phoenix, "~> 1.6.5"},
       {:plug_cowboy, "~> 2.5"},
       {:poison, "~> 2.0"},
+      {:scrivener_ecto, "~> 2.0"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
 
