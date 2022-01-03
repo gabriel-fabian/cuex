@@ -11,7 +11,7 @@
     * [Heroku](#heroku)
     * [Docker](#docker)
     * [Coveralls](#coveralls)
-    * [Github Actins](#github-actions)
+    * [Github Actions](#github-actions)
 - [Development Setup](#development-setup)
   * [Setup With Docker](#setup-with-docker-recommended)
   * [Setup With Local Environment](#setup-with-local-environment-not-recommended)
@@ -92,7 +92,11 @@ Now the application is up and running on `localhost:4000`
 
 This API offers three endpoints, one for converting values between two currencies and two other for listing all requests or user specific ones.
 
+To make the request to the API is recommended to use Postman, Curl or something similar.
+
 ### **Converting Currencies**
+
+For a list containing all currencies check the [Available Currencies](#available-currencies) section.
 
 To convert value between two currencies, you can make a `POST` request to `https://cuex-app.herokuapp.com/api/convert` for the deployed app on Heroku or `localhost:4000/api/convert` when using in development mode. This request needs a Json body with valid currency types as follows:
 
@@ -105,7 +109,31 @@ To convert value between two currencies, you can make a `POST` request to `https
 }
 ```
 
-For a list containing all currencies check the [Available Currencies](#available-currencies) section.
+And a valid params types:
+
+``` elixir
+  "from_currency" # String
+  "to_currency" # String
+  "value" # Integer 10, Float 10.5 or valid representation as a String Number, "10.5"
+  "user_id" # Integer 1 or a valid representation of a String Integer "1"
+```
+
+If all params are correctly specified, it should return a response like that:
+
+``` elixir
+{
+    "data": {
+        "conversion_rate": 6.5,
+        "converted_value": 65,
+        "date": "2022-01-03T17:04:22",
+        "from_currency": "EUR",
+        "id": 1,
+        "to_currency": "BRL",
+        "user_id": 1,
+        "value": 10.0
+    }
+}
+```
 
 ### **Retrieving Conversions Index**
 
@@ -113,11 +141,65 @@ This endpoint lists all conversions made by the API. Simply do a `GET` request t
 
 This route accepts pagination as an option. If you desire to paginate your requests just add a query param to specify the page and number of rows. Ex: `https://cuex-app.herokuapp.com/api/conversions?page=1&page_size=15`
 
+If there is any entry a response is returned like that:
+
+``` elixir
+{
+  "data": [
+    {
+        "conversion_rate": 6.5,
+        "from_currency": "EUR",
+        "id": 1,
+        "to_currency": "BRL",
+        "user_id": 1,
+        "value": 10
+    },
+    ...
+  ]
+}
+
+```
+
+Otherwise a data with empty list is returned:
+
+``` elixir
+{
+  "data": []
+}
+```
+
 ### **Retrieving User conversions**
 
 This endpoint lists all conversions made to the API by the given user id. Simply do a `GET` request to `https://cuex-app.herokuapp.com/api/conversions/user/:id` or `localhost:4000/api/conversions/user/:id` where `:id` needs to be overwritten by the specific user id.
 
 This route accepts pagination as an option. If you desire to paginate your requests just add a query param to specify the page and number of rows. Ex: `https://cuex-app.herokuapp.com/api/conversions/user/1?page=1&page_size=15`
+
+If there is any entry a response is returned like that:
+
+``` elixir
+{
+  "data": [
+    {
+        "conversion_rate": 6.5,
+        "from_currency": "EUR",
+        "id": 1,
+        "to_currency": "BRL",
+        "user_id": 1,
+        "value": 10
+    },
+    ...
+  ]
+}
+
+```
+
+Otherwise a data with empty list is returned:
+
+``` elixir
+{
+  "data": []
+}
+```
 
 ## **Available Currencies**
 
