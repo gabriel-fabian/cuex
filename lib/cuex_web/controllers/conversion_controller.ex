@@ -14,14 +14,14 @@ defmodule CuexWeb.ConversionController do
     render(conn, "index.json", conversion_histories: conversion_histories)
   end
 
-  def get_conversions_from_user(conn, %{"user_id" => user_id}) do
-    Logger.info("ConversionController | Received get_conversions_from_user, user_id=#{user_id}")
+  def show(conn, %{"user_id" => user_id}) do
+    Logger.info("ConversionController | Received show, user_id=#{user_id}")
 
     conversion_histories = Conversion.get_conversions_from_user(user_id)
     render(conn, "index.json", conversion_histories: conversion_histories)
   end
 
-  def convert_currency(conn, params) do
+  def create(conn, params) do
     Logger.info("ConversionController | Received request with params=#{inspect(params)}")
 
     case Conversion.convert_currency(params) do

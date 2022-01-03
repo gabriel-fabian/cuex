@@ -48,9 +48,9 @@ defmodule CuexWeb.ConversionControllerTest do
     end
   end
 
-  describe "get_conversions_from_user/2" do
+  describe "show/2" do
     test "lists all conversions from user", %{conn: conn, first_user_id: user_id} do
-      conn = get(conn, Routes.conversion_path(conn, :get_conversions_from_user, user_id))
+      conn = get(conn, Routes.conversion_path(conn, :show, user_id))
       response_data = json_response(conn, 200)["data"]
 
       assert response_data == conversions_from_user_response(user_id)
@@ -58,12 +58,12 @@ defmodule CuexWeb.ConversionControllerTest do
     end
   end
 
-  describe "convert_currency/2" do
+  describe "create/2" do
     test "with valid params returns a converted value and create conversion history", %{
       conn: conn,
       conversion_fixtures_count: conversion_fixtures_count
     } do
-      conn = post(conn, Routes.conversion_path(conn, :convert_currency), @valid_params)
+      conn = post(conn, Routes.conversion_path(conn, :create), @valid_params)
       response_data = json_response(conn, 200)["data"]
 
       conversion_history = get_last_conversion_history()
@@ -73,7 +73,7 @@ defmodule CuexWeb.ConversionControllerTest do
     end
 
     test "with invalid params returns an error", %{conn: conn} do
-      conn = post(conn, Routes.conversion_path(conn, :convert_currency), nil)
+      conn = post(conn, Routes.conversion_path(conn, :create), nil)
       response_data = json_response(conn, 400)["errors"]
 
       assert response_data == %{
