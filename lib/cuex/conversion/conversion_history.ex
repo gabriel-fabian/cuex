@@ -1,13 +1,14 @@
-defmodule Cuex.Converter.Request do
+defmodule Cuex.Conversion.ConversionHistory do
   @moduledoc """
-  Schema to save the requests made to the API
+  Schema to save the conversion request made to the API
   """
+
   use Ecto.Schema
   import Ecto.Changeset
 
   @required_params [:user_id, :from_currency, :to_currency, :value, :conversion_rate]
 
-  schema "requests" do
+  schema "conversion_histories" do
     field :conversion_rate, :float
     field :from_currency, :string
     field :to_currency, :string
@@ -18,8 +19,8 @@ defmodule Cuex.Converter.Request do
   end
 
   @doc false
-  def changeset(request, attrs) do
-    request
+  def changeset(conversion_history, attrs) do
+    conversion_history
     |> cast(attrs, @required_params)
     |> validate_required(@required_params)
   end
