@@ -8,20 +8,12 @@ defmodule Cuex.ConversionFixtures do
   Generate a conversion_history.
   """
 
-  alias Cuex.Conversion
+  alias Cuex.Conversion.ConversionHistory
+  alias Cuex.Repo
 
-  def fixture(:conversion_history, attrs \\ %{}) do
-    {:ok, conversion_history} =
-      attrs
-      |> Enum.into(%{
-        "conversion_rate" => 120.5,
-        "from_currency" => "test_from_currency",
-        "to_currency" => "test_to_currency",
-        "user_id" => 42,
-        "value" => 120.5
-      })
-      |> Conversion.create_conversion_history()
-
-    conversion_history
+  def fixture(:conversion_history, attrs) do
+    %ConversionHistory{}
+    |> ConversionHistory.changeset(attrs)
+    |> Repo.insert!()
   end
 end
