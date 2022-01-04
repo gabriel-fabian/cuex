@@ -10,29 +10,31 @@ defmodule CuexWeb.ConversionController do
   def index(conn, %{"user_id" => user_id, "page" => page, "page_size" => page_size}) do
     Logger.info("ConversionController | Received show, user_id=#{user_id}")
 
-    conversion_histories = Conversion.get_conversions_from_user(user_id, page, page_size)
-    render(conn, "index.json", conversion_histories: conversion_histories)
+    user_id
+    |> Conversion.get_conversions_from_user(page, page_size)
+    |> render_index(conn)
   end
 
   def index(conn, %{"user_id" => user_id}) do
     Logger.info("ConversionController | Received show, user_id=#{user_id}")
 
-    conversion_histories = Conversion.get_conversions_from_user(user_id)
-    render(conn, "index.json", conversion_histories: conversion_histories)
+    user_id
+    |> Conversion.get_conversions_from_user()
+    |> render_index(conn)
   end
 
   def index(conn, %{"page" => page, "page_size" => page_size}) do
     Logger.info("ConversionController | Received index call")
 
-    conversion_histories = Conversion.list_conversions(page, page_size)
-    render(conn, "index.json", conversion_histories: conversion_histories)
+    page
+    |> Conversion.list_conversions(page_size)
+    |> render_index(conn)
   end
 
   def index(conn, _params) do
     Logger.info("ConversionController | Received index call")
 
-    conversion_histories = Conversion.list_conversions()
-    render(conn, "index.json", conversion_histories: conversion_histories)
+    render_index(Conversion.list_conversions(), conn)
   end
 
   def create(conn, params) do
@@ -45,5 +47,9 @@ defmodule CuexWeb.ConversionController do
       error ->
         error
     end
+  end
+
+  defp render_index(conversion_histories, conn) do
+    render(conn, "index.json", conversion_histories: conversion_histories)
   end
 end

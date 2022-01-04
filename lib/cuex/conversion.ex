@@ -42,7 +42,8 @@ defmodule Cuex.Conversion do
          {:ok, response} <- @exchange_api.fetch_rates(),
          {:ok, base_currency_exchange_rates} <-
            get_base_currency_exchange_rate(response["rates"], from_currency, to_currency),
-         {:ok, converted_value} <- convert_values(base_currency_exchange_rates, parsed_params.value),
+         {:ok, converted_value} <-
+           convert_values(base_currency_exchange_rates, parsed_params.value),
          {:ok, conversion_rate} <- get_conversion_rate(parsed_params.value, converted_value),
          {:ok, saved_conversion} <- create_conversion_history(params, conversion_rate),
          {:ok, response} <- handle_response(saved_conversion, converted_value) do
