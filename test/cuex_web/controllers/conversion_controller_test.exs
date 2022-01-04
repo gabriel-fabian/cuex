@@ -4,6 +4,8 @@ defmodule CuexWeb.ConversionControllerTest do
   import Cuex.ConversionFixtures
   import Ecto.Query
 
+  require Integer
+
   alias Cuex.Conversion.ConversionHistory
   alias Cuex.{Conversion, Repo}
 
@@ -25,11 +27,9 @@ defmodule CuexWeb.ConversionControllerTest do
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
 
-    fixture(:conversion_history, @create_attrs)
-    fixture(:conversion_history, Map.merge(@create_attrs, %{"user_id" => 43}))
-    fixture(:conversion_history, @create_attrs)
+    create_conversion_histories()
 
-    conversion_fixtures_count = 3
+    conversion_fixtures_count = Enum.count(Conversion.list_conversions())
 
     %{
       first_user_id: 42,
@@ -39,41 +39,62 @@ defmodule CuexWeb.ConversionControllerTest do
   end
 
   describe "index/2" do
-    test "lists all conversion histories", %{conn: conn} do
+    test "lists all conversion histories", %{
+      conn: conn,
+      conversion_fixtures_count: conversion_fixtures_count
+    } do
       conn = get(conn, Routes.conversion_path(conn, :index))
       response_data = json_response(conn, 200)["data"]
 
       assert response_data == index_response()
-      assert Enum.count(response_data) == 3
+      assert Enum.count(response_data) == conversion_fixtures_count
     end
 
     test "lists all conversion histories with pagination", %{conn: conn} do
-      paginated_url = Routes.conversion_path(conn, :index) <> "?page=1&page_size=2"
+      first_paginated_url = Routes.conversion_path(conn, :index) <> "?page=1&page_size=5"
+      second_paginated_url = Routes.conversion_path(conn, :index) <> "?page=2&page_size=20"
 
-      conn = get(conn, paginated_url)
+      conn = get(conn, first_paginated_url)
       response_data = json_response(conn, 200)["data"]
 
-      assert Enum.count(response_data) == 2
+      assert Enum.count(response_data) == 5
+
+      conn = get(conn, second_paginated_url)
+      response_data = json_response(conn, 200)["data"]
+
+      assert Enum.count(response_data) == 20
     end
 
-    test "lists all conversions histories from user", %{conn: conn, first_user_id: user_id} do
+    test "lists all conversions histories from user", %{
+      conn: conn,
+      first_user_id: user_id,
+      conversion_fixtures_count: conversion_fixtures_count
+    } do
       conn = get(conn, Routes.conversion_path(conn, :index, user_id))
       response_data = json_response(conn, 200)["data"]
 
       assert response_data == conversions_from_user_response(user_id)
-      assert Enum.count(response_data) == 2
+      assert Enum.count(response_data) == conversion_fixtures_count / 2
     end
 
     test "lists all conversions histories from user paginated", %{
       conn: conn,
       first_user_id: user_id
     } do
-      paginated_url = Routes.conversion_path(conn, :index, user_id) <> "?page=1&page_size=1"
+      first_paginated_url = Routes.conversion_path(conn, :index, user_id) <> "?page=1&page_size=5"
 
-      conn = get(conn, paginated_url)
+      second_paginated_url =
+        Routes.conversion_path(conn, :index, user_id) <> "?page=2&page_size=7"
+
+      conn = get(conn, first_paginated_url)
       response_data = json_response(conn, 200)["data"]
 
-      assert Enum.count(response_data) == 1
+      assert Enum.count(response_data) == 5
+
+      conn = get(conn, second_paginated_url)
+      response_data = json_response(conn, 200)["data"]
+
+      assert Enum.count(response_data) == 7
     end
   end
 
@@ -151,5 +172,14 @@ defmodule CuexWeb.ConversionControllerTest do
       "user_id" => conversion_history.user_id,
       "value" => conversion_history.value
     }
+  end
+
+  defp create_conversion_histories do
+    Enum.each(1..50, fn n ->
+      case Integer.is_even(n) do
+        true -> fixture(:conversion_history, @create_attrs)
+        false -> fixture(:conversion_history, Map.merge(@create_attrs, %{"user_id" => 43}))
+      end
+    end)
   end
 end
