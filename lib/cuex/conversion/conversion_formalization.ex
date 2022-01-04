@@ -18,5 +18,6 @@ defmodule Cuex.Conversion.Formalization do
     conversion
     |> cast(attrs, @required_attrs)
     |> validate_required(@required_attrs)
+    |> validate_number(:value, greater_than: 0)
   end
 end

@@ -4,17 +4,7 @@ defmodule Cuex.ConversionTest do
   alias Cuex.Conversion
 
   describe "conversion_histories" do
-    alias Cuex.Conversion.ConversionHistory
-
     import Cuex.ConversionFixtures
-
-    @invalid_attrs %{
-      "conversion_rate" => nil,
-      "from_currency" => nil,
-      "to_currency" => nil,
-      "user_id" => nil,
-      "value" => nil
-    }
 
     @valid_attrs %{
       "conversion_rate" => 120.5,
@@ -62,21 +52,6 @@ defmodule Cuex.ConversionTest do
                third_conversion_history
              ]
     end
-
-    test "create_conversion_history/1 with valid data creates a conversion_history" do
-      assert {:ok, %ConversionHistory{} = conversion_history} =
-               Conversion.create_conversion_history(@valid_attrs)
-
-      assert conversion_history.conversion_rate == @valid_attrs["conversion_rate"]
-      assert conversion_history.from_currency == @valid_attrs["from_currency"]
-      assert conversion_history.to_currency == @valid_attrs["to_currency"]
-      assert conversion_history.user_id == @valid_attrs["user_id"]
-      assert conversion_history.value == @valid_attrs["value"]
-    end
-
-    test "create_conversion_history/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Conversion.create_conversion_history(@invalid_attrs)
-    end
   end
 
   describe "convert_currency/1" do
@@ -105,12 +80,7 @@ defmodule Cuex.ConversionTest do
     test "when value is lower or equal than 0 returns an error" do
       invalid_params = Map.merge(@valid_params, %{"value" => 0})
 
-      assert {:error, response} = Conversion.convert_currency(invalid_params)
-
-      assert response == %{
-               body: "Invalid value provided, must be greather than 0",
-               status_code: 400
-             }
+      assert {:error, %Ecto.Changeset{}} = Conversion.convert_currency(invalid_params)
     end
 
     test "when currency is not valid returns an error" do

@@ -3,8 +3,6 @@ defmodule Cuex.Conversion do
   The Conversion context.
   """
 
-  @exchange_api Application.compile_env(:cuex, :exchangerate)[:api]
-
   import Ecto.Query, warn: false
 
   require Logger
@@ -12,6 +10,9 @@ defmodule Cuex.Conversion do
   alias Cuex.Conversion.{ConversionHistory, Formalization}
   alias Cuex.Repo
   alias Ecto.Changeset
+
+  @exchange_api Application.compile_env(:cuex, :exchangerate)[:api]
+  @required_fields ["from_currency", "to_currency", "value", "user_id"]
 
   @doc """
   Convert the given currencies based on Euro exchange rates and save the request to ConversionHistory in database.
@@ -38,12 +39,11 @@ defmodule Cuex.Conversion do
         } = params
       ) do
     with {:ok, parsed_params} <- parse_params(params),
-         {true, value} <- is_valid_value?(parsed_params.value),
          {:ok, response} <- @exchange_api.fetch_rates(),
          {:ok, base_currency_exchange_rates} <-
            get_base_currency_exchange_rate(response["rates"], from_currency, to_currency),
-         {:ok, converted_value} <- convert_values(base_currency_exchange_rates, value),
-         {:ok, conversion_rate} <- get_conversion_rate(value, converted_value),
+         {:ok, converted_value} <- convert_values(base_currency_exchange_rates, parsed_params.value),
+         {:ok, conversion_rate} <- get_conversion_rate(parsed_params.value, converted_value),
          {:ok, saved_conversion} <- create_conversion_history(params, conversion_rate),
          {:ok, response} <- handle_response(saved_conversion, converted_value) do
       {:ok, response}
@@ -67,7 +67,7 @@ defmodule Cuex.Conversion do
   end
 
   @doc """
-  Returns the list of ConversionHistory.
+  Returns the list or paginated list of all ConversionHistory.
 
   ## Examples
 
@@ -86,7 +86,7 @@ defmodule Cuex.Conversion do
   end
 
   @doc """
-  Returns the list of conversions for a given user_id
+  Returns the list or paginated list of conversions for a given user_id
 
   ## Examples
 
@@ -106,19 +106,7 @@ defmodule Cuex.Conversion do
     |> Repo.paginate(page: page, page_size: page_size)
   end
 
-  @doc """
-  Creates a conversion_history.
-
-  ## Examples
-
-      iex> create_conversion_history(%{field: value})
-      {:ok, %ConversionHistory{}}
-
-      iex> create_conversion_history(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_conversion_history(attrs \\ %{}) do
+  defp create_conversion_history(attrs) do
     %ConversionHistory{}
     |> ConversionHistory.changeset(attrs)
     |> Repo.insert()
@@ -141,11 +129,6 @@ defmodule Cuex.Conversion do
         {:error, changeset}
     end
   end
-
-  defp is_valid_value?(value) when value > 0, do: {true, value}
-
-  defp is_valid_value?(_),
-    do: {:error, %{status_code: 400, body: "Invalid value provided, must be greather than 0"}}
 
   defp get_base_currency_exchange_rate(rates, from_currency, to_currency) do
     with {true, _} <- is_valid_currency?(rates, from_currency),
@@ -171,11 +154,7 @@ defmodule Cuex.Conversion do
 
   defp get_conversion_rate(value, converted_value), do: {:ok, converted_value / value}
 
-  defp missing_params(params) do
-    required_fields = ["from_currency", "to_currency", "value", "user_id"]
-
-    Enum.reject(required_fields, fn field -> params[field] end)
-  end
+  defp missing_params(params), do: Enum.reject(@required_fields, fn field -> params[field] end)
 
   defp handle_response(%ConversionHistory{} = saved_conversion, converted_value),
     do: {:ok, Map.merge(saved_conversion, %{converted_value: converted_value})}
