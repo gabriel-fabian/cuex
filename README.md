@@ -61,7 +61,11 @@ This setup is recommended because it provides an easy and fast method to run the
 
 **Step 3** - Run `docker-compose up` inside the repository folder.
 
-Now the application is up and running on `localhost:4000`
+Now the application is up and running on `localhost:4000`.
+
+To see the application logs just run `docker-compose logs -f` which will bind the logs to the current terminal.
+
+It's possible to access the container that is running the application to run tests or access the `IEx console` by running `docker exec -it cuex sh` to bind your current terminal to the container `sh`. Inside the container run `mix test` to run tests or `iex -S mix` to open a IEx console for this application.
 
 ### **Setup With Local Environment (Not Recommended)**
 
@@ -87,6 +91,8 @@ Check the official [Elixir](https://elixir-lang.org/install.html) or [Phoenix](h
 **Step 4** - Run `mix phx.server` to start the server.
 
 Now the application is up and running on `localhost:4000`
+
+It's possible to open a `IEx console` for this application by running `iex -S mix` or run tests by running `mix test`.
 
 ## **Available Endpoints**
 
